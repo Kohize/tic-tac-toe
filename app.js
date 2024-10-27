@@ -16,7 +16,7 @@ let guestPlayer = {
     mark: 'O',
 }
 
-const WIN_COMBINATIONS = [[]]
+const WIN_COMBINATIONS = [['X', 'X', 'X']]
 let isHostTurn = true;
 
 
@@ -26,42 +26,42 @@ function placeMark() {
     cells.forEach((cell, index) => {
         cell.addEventListener('click', () => {
             if (isHostTurn) {
-                gameboard[index] = hostPlayer.mark;
-                cell.innerHTML = gameboard[index];
-                console.log(gameboard);
-                isHostTurn = false
+                if (cell.innerHTML !== '') {
+                    return
+                } else {
+                    gameboard[index] = hostPlayer.mark;
+                    cell.innerHTML = gameboard[index];
+                    console.log(gameboard);
+                    isHostTurn = false
+                }
             } else {
-                gameboard[index] = guestPlayer.mark;
-                cell.innerHTML = gameboard[index];
-                isHostTurn = true;
+                if (cell.innerHTML !== '') {
+                    return;
+                } else {
+                    gameboard[index] = guestPlayer.mark;
+                    cell.innerHTML = gameboard[index];
+                    console.log(gameboard);
+                    isHostTurn = true;
+                }
             }
 
         })
-        // cell.addEventListener('mouseenter', (e) => {
-        //     console.log(e.target);
-        //     e.target.textContent = hostPlayer.mark;
+        cell.addEventListener('mouseenter', (e) => {
+            if (isHostTurn) {
+                e.target.setAttribute('data-placeholder', hostPlayer.mark)
+            } else {
+                e.target.setAttribute('data-placeholder', guestPlayer.mark)
+            }
 
 
-        // })
-        // cell.addEventListener('mouseleave', (e) => {
-        //     if (e.target.textContent !== '') {
-        //         return
-        //     } else {
-        //         e.target.textContent = '';
-        //     }
-        // })
-    })
-}
 
-function guestMark() {
-    cells.forEach((cell, index) => {
-        cell.addEventListener('click', () => {
-            gameboard[index] = guestPlayer.mark;
-            cell.innerHTML = gameboard[index];
-            console.log(gameboard);
+        })
+        cell.addEventListener('mouseleave', () => {
+            cell.setAttribute('data-placeholder', '')
         })
     })
 }
+
 
 function playRound() {
     placeMark();
