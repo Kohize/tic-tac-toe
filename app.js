@@ -1,14 +1,3 @@
-
-/* 
-TODO
-✅ Смена хода
-✅Сообщение победы
-✅Комбинация для победы
-✅Рестарт при ничье или победе
-✅Блок с информации о раунде и игре
-Блокировка взаимодействия при досрочном завершении (победа при маленьком количестве ходов)
-*/
-
 let markCells = document.querySelectorAll('.cell');
 let gameStatus = document.querySelector('.game__status');
 let gameResult = document.querySelector('.game__result');
@@ -100,27 +89,27 @@ function markPlaceHandler(cell, index) {
 }
 
 let cells = [...markCells];
-function placeMark() {
-    cells.forEach((cell, index) => {
-        cell.addEventListener('click', markPlaceHandler(cell, index))
+
+cells.forEach((cell, index) => {
+    cell.addEventListener('click', () => markPlaceHandler(cell, index));
 
 
-        cell.addEventListener('mouseenter', (e) => {
-            if (e.target.innerHTML !== '') {
-                return
-            }
-            else if (isHostTurn) {
-                e.target.setAttribute('data-placeholder', hostPlayer.mark)
-            } else {
-                e.target.setAttribute('data-placeholder', guestPlayer.mark)
-            }
-        })
-        cell.addEventListener('mouseleave', () => {
-            cell.setAttribute('data-placeholder', '')
-        })
+    cell.addEventListener('mouseenter', (e) => {
+        if (e.target.innerHTML !== '') {
+            return
+        }
+        else if (isHostTurn) {
+            e.target.setAttribute('data-placeholder', hostPlayer.mark)
+        } else {
+            e.target.setAttribute('data-placeholder', guestPlayer.mark)
+        }
     })
+    cell.addEventListener('mouseleave', () => {
+        cell.setAttribute('data-placeholder', '')
+    })
+})
 
-}
+
 
 restartButton.addEventListener('click', restartGame);
 
@@ -128,10 +117,4 @@ function restartGame() {
     location.reload()
 }
 
-
-function playRound() {
-    placeMark();
-}
-
-playRound()
 
