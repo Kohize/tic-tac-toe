@@ -4,8 +4,9 @@ TODO
 ✅ Смена хода
 ✅Сообщение победы
 ✅Комбинация для победы
-Рестарт при ничье или победе
+✅Рестарт при ничье или победе
 ✅Блок с информации о раунде и игре
+Блокировка взаимодействия при досрочном завершении (победа при маленьком количестве ходов)
 */
 
 let markCells = document.querySelectorAll('.cell');
@@ -32,8 +33,10 @@ function renderGameStatus() {
         gameStatus.textContent = `${guestPlayer.mark} player turn!`
     } else if (gameWinner !== '') {
         gameStatus.textContent = `Game is over!`
+        restartButton.style.display = 'block';
     } else if (gameWinner === '' && turnCounter === 9) {
         gameStatus.textContent = `Game is over! Draw!`
+        restartButton.style.display = 'block';
     }
 }
 
@@ -50,6 +53,7 @@ function checkForWin(board) {
         (cell[2] === 'X' && cell[4] === 'X' && cell[6] === 'X')
     ) {
         gameResult.textContent = `${hostPlayer.mark} won the game!`
+        restartButton.style.display = 'block';
         gameWinner = hostPlayer;
     } else if (
         (cell[0] === 'O' && cell[1] === 'O' && cell[2] === 'O') ||
@@ -62,40 +66,43 @@ function checkForWin(board) {
         (cell[2] === 'O' && cell[4] === 'O' && cell[6] === 'O')
     ) {
         gameResult.textContent = `${guestPlayer.mark} won the game!`
+        restartButton.style.display = 'block';
         gameWinner = guestPlayer;
+    }
+}
+
+function markPlaceHandler(cell, index) {
+    if (isHostTurn) {
+        if (cell.innerHTML !== '') {
+            return
+        } else {
+            gameboard[index] = hostPlayer.mark;
+            cell.innerHTML = gameboard[index];
+            turnCounter++
+            console.log(gameboard);
+            isHostTurn = false;
+            checkForWin(gameboard);
+            renderGameStatus()
+        }
+    } else {
+        if (cell.innerHTML !== '') {
+            return;
+        } else {
+            gameboard[index] = guestPlayer.mark;
+            cell.innerHTML = gameboard[index];
+            turnCounter++
+            console.log(gameboard);
+            isHostTurn = true;
+            checkForWin(gameboard);
+            renderGameStatus()
+        }
     }
 }
 
 let cells = [...markCells];
 function placeMark() {
     cells.forEach((cell, index) => {
-        cell.addEventListener('click', () => {
-            if (isHostTurn) {
-                if (cell.innerHTML !== '') {
-                    return
-                } else {
-                    gameboard[index] = hostPlayer.mark;
-                    cell.innerHTML = gameboard[index];
-                    turnCounter++
-                    console.log(gameboard);
-                    isHostTurn = false;
-                    checkForWin(gameboard);
-                    renderGameStatus()
-                }
-            } else {
-                if (cell.innerHTML !== '') {
-                    return;
-                } else {
-                    gameboard[index] = guestPlayer.mark;
-                    cell.innerHTML = gameboard[index];
-                    turnCounter++
-                    console.log(gameboard);
-                    isHostTurn = true;
-                    checkForWin(gameboard);
-                    renderGameStatus()
-                }
-            }
-        })
+        cell.addEventListener('click', markPlaceHandler(cell, index))
 
 
         cell.addEventListener('mouseenter', (e) => {
@@ -113,6 +120,12 @@ function placeMark() {
         })
     })
 
+}
+
+restartButton.addEventListener('click', restartGame);
+
+function restartGame() {
+    location.reload()
 }
 
 
